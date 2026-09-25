@@ -78,3 +78,47 @@ module four_bit_RCA_RCS(A, B, Sub, S, Cout);
   assign Cout = G[3] + P[3] * C[2];
     
 endmodule
+
+// e. Design a testbench to test the 4-bit RCA/RCS. The testbench must include at least the following cases:
+// * one unsigned addition,
+// * one unsigned subtraction,
+// * one signed addition involving a negative operand,
+// * one signed subtraction involving a negative operand, and
+// * one case that produces a carry-out.
+// For signed operations, interpret the operands using two’s-complement representation. Additional test cases may 
+//be included if desired. Clearly show the input values and correspond-ing output waveforms.
+module testbench;
+  reg [3:0] A, B;
+  reg Sub;
+  wire [3:0] S;
+  wire Cout;
+  
+  initial begin    
+    $dumpfile("dump.vcd");
+    $dumpvars(0, testbench);
+    $display ("time\t A\t\t B\t\t Cout\t S");	
+    $monitor ("%g\t\t %b\t %b\t %b\t\t %b\t", $time, A, B, Cout, S);
+    Sub = 1'b0;		// Add
+    A = 4'b0100;	// 4
+    B = 4'b0101; 	// 5
+    #5				// Expected Output: 9
+    Sub = 1'b1;		// Subtract
+    A = 4'b0111; 	// 7
+    B = 4'b0100; 	// 4
+    #5				// Expected Output: 3
+    Sub = 1'b0;		// Add
+    A = 4'b0110;	// 6
+    B = 4'b1110;	// -2
+    #5				// Expected Output: 4
+    Sub = 1'b1;		// Subtract
+    A = 4'b0100;	// 4
+    B = 4'b1111;	// -1
+    #5				// Expected Output: 5
+    Sub = 1'b0;		// Add
+    A = 4'b1111;	// 8
+    B = 4'b1111;	// 8
+    #5 $finish;		// Expected Output: Cout = 1
+  end
+  
+  four_bit_RCA_RCS add0(A, B, Sub, S, Cout);
+endmodule
